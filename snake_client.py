@@ -38,7 +38,8 @@ pygame.init()
 global width, rows
 width = 500
 rows = 20
-################################################################ 
+
+
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server = "localhost"
 port = 5555

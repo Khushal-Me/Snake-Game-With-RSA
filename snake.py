@@ -1,9 +1,6 @@
-import math
 import random
 import pygame
 import random
-import tkinter as tk
-from tkinter import messagebox
 
 
 
@@ -97,13 +94,13 @@ class snake():
         dx, dy = tail.dirnx, tail.dirny
 
         if dx == 1 and dy == 0:
-            self.body.append(cube((tail.pos[0]-1,tail.pos[1])))
+            self.body.append(cube((tail.pos[0]-1,tail.pos[1]), color=self.color))
         elif dx == -1 and dy == 0:
-            self.body.append(cube((tail.pos[0]+1,tail.pos[1])))
+            self.body.append(cube((tail.pos[0]+1,tail.pos[1]), color=self.color))
         elif dx == 0 and dy == 1:
-            self.body.append(cube((tail.pos[0],tail.pos[1]-1)))
+            self.body.append(cube((tail.pos[0],tail.pos[1]-1), color=self.color))
         elif dx == 0 and dy == -1:
-            self.body.append(cube((tail.pos[0],tail.pos[1]+1)))
+            self.body.append(cube((tail.pos[0],tail.pos[1]+1), color=self.color))
 
         self.body[-1].dirnx = dx
         self.body[-1].dirny = dy
@@ -124,68 +121,67 @@ class snake():
 
 class SnakeGame:
 
-    def __init__(self, rows) : 
+    def __init__(self, rows):
         self.rows = rows
-        self.players = {} 
-        self.snacks = [cube(randomSnack(rows)) for _ in range(5)] 
-    
-    
-    def add_player(self, user_id, color) : 
-        self.players[user_id] = snake(color, (10,10))
-        
-    def remove_player(self, user_id) :
-        self.players.pop(user_id)
-    
-    def move(self, moves) :
-        moves_ids = set([m[0] for m in moves])
-        still_ids = set(self.players.keys()) - moves_ids 
-        for move in moves : 
-            self.move_player(move[0], move[1])
-            #print("moving player {} to {}".format(move[0], move[1]))
+        self.players = {}
+        self.snacks = [cube(randomSnack(rows)) for _ in range(5)]
 
-        for still_id in still_ids :
+    def add_player(self, user_id, color):
+        self.players[user_id] = snake(color, (10, 10))
+
+    def remove_player(self, user_id):
+        self.players.pop(user_id)
+
+    def move(self, moves):
+        moves_ids = set([m[0] for m in moves])
+        still_ids = set(self.players.keys()) - moves_ids
+        for move in moves:
+            self.move_player(move[0], move[1])
+
+        for still_id in still_ids:
             self.move_player(still_id, None)
-            #print("moving player {} in the same direction".format(still_id))
-            
-        for p_id in self.players.keys() :
-            if self.check_collision(p_id) : 
+
+        for p_id in self.players.keys():
+            if self.check_collision(p_id):
                 self.reset_player(p_id)
 
-
-
-    def move_player(self, user_id, key = None) : 
+    def move_player(self, user_id, key=None):
         if user_id in self.players:
             self.players[user_id].move(key)
-    
-    def reset_player(self, user_id) :
-        x_start = random.randrange(1, self.rows-1)
-        y_start = random.randrange(1, self.rows-1)
+
+    def reset_player(self, user_id):
+        x_start = random.randrange(1, self.rows - 1)
+        y_start = random.randrange(1, self.rows - 1)
         self.players[user_id].reset((x_start, y_start))
 
-    def get_player(self, user_id) : 
+    def get_player(self, user_id):
         return self.players[user_id].head.pos
 
-    def check_collision(self, user_id) : 
-        for snack in self.snacks : 
-            if self.players[user_id].head.pos == snack.pos : 
+    def check_collision(self, user_id):
+        for snack in self.snacks:
+            if self.players[user_id].head.pos == snack.pos:
                 self.snacks.remove(snack)
                 self.snacks.append(cube(randomSnack(self.rows)))
                 self.players[user_id].addCube()
 
-        if self.players[user_id].head.pos in list(map(lambda z:z.pos,self.players[user_id].body[1:])):
+        if self.players[user_id].head.pos in list(map(lambda z: z.pos, self.players[user_id].body[1:])):
             return True
 
-        if self.players[user_id].head.pos[0] < 0 or self.players[user_id].head.pos[1] < 0 or self.players[user_id].head.pos[0] > self.rows-1 or self.players[user_id].head.pos[1] > self.rows-1:
+        if (
+            self.players[user_id].head.pos[0] < 0
+            or self.players[user_id].head.pos[1] < 0
+            or self.players[user_id].head.pos[0] > self.rows - 1
+            or self.players[user_id].head.pos[1] > self.rows - 1
+        ):
             return True
 
         return False
-    
-    def get_state(self) : 
+
+    def get_state(self):
         players_pos = [p.get_pos() for p in self.players.values()]
         players_pos_str = "**".join(players_pos)
         snacks_pos = "**".join([str(s.pos) for s in self.snacks])
         return players_pos_str + "|" + snacks_pos
-
 
 
     
