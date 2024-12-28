@@ -1,4 +1,4 @@
-# Multiplayer Snake Game
+# SnakeSync
 
 This repository contains a multiplayer Snake game implemented in Python, using sockets for communication between the server and multiple clients. The game includes encrypted communication using RSA.
 
